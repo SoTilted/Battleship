@@ -1,4 +1,4 @@
-import { Ship, Gameboard, Player } from "./classes";
+import { Ship, Gameboard, Player } from "./src/classes";
 
 it("Tests if  ship has been hit.", () => {
   const ship1 = new Ship(5);
