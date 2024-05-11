@@ -38,17 +38,19 @@ class Gameboard {
   placeShip(ship, coordinates) {
     for (let counter = 0; counter < ship.length; counter++) {
       this.myBoard[coordinates[counter][0]][
-        parseInt(coordinates[counter][1] - 1)
+        parseInt(coordinates[counter].substr(1) - 1)
       ] = ship;
     }
   }
   receiveAttack(letter, number) {
     if (typeof this.myBoard[letter][number - 1] === "object") {
       this.myBoard[letter][number - 1].hit();
+      this.myBoard[letter][number - 1] = "hit";
       if (this.myBoard[letter][number - 1].sunk) {
         this.ships--;
       }
-      this.myBoard[letter][number - 1] = "hit";
+    } else {
+      this.myBoard[letter][number - 1] = "miss";
     }
   }
   gameOver() {

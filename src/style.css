@@ -38,7 +38,6 @@ body {
   flex-direction: column;
   align-items: center;
   background-color: #949292;
-
 }
 
 .footer {
@@ -216,4 +215,43 @@ input {
 @keyframes fadeOut {
   100% { opacity: 0 }
   0% { opacity: 1 }
+}
+.game-screen {
+  
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: space-evenly;
+  padding: 20px;
+}
+.myBoard,.enemyBoard {
+  display: grid;
+  grid-template-columns: repeat(11, min(var(--cell-size), 75px));
+  grid-template-rows: repeat(11, min(var(--cell-size), 75px));
+  border: 1px solid black;
+  box-shadow: 0 0 6px 6px rgba(74, 74, 74, 0.8);
+  background-color: white;
+  z-index: 100;
+}
+
+@media all and (min-width:1705px) {
+  .game-screen {
+    flex-direction: row;
+    width: 100%;
+  }
+}
+
+.miss {
+  background-color: lightgray;
+  pointer-events: none;
+}
+
+.hit {
+  background-color: red;
+  pointer-events: none;
+}
+
+.boat {
+  background-color: blue;
+  opacity: 0.6;
 }
