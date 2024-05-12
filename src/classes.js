@@ -45,10 +45,10 @@ class Gameboard {
   receiveAttack(letter, number) {
     if (typeof this.myBoard[letter][number - 1] === "object") {
       this.myBoard[letter][number - 1].hit();
-      this.myBoard[letter][number - 1] = "hit";
       if (this.myBoard[letter][number - 1].sunk) {
         this.ships--;
       }
+      this.myBoard[letter][number - 1] = "hit";
     } else {
       this.myBoard[letter][number - 1] = "miss";
     }
@@ -62,7 +62,7 @@ class Gameboard {
   }
 }
 
-class Player {
+export default class Player {
   constructor(playerType) {
     this.playerType = playerType;
     this.playerGameBoard = new Gameboard();
@@ -76,4 +76,4 @@ class Player {
     };
   }
 }
-export { Ship, Gameboard, Player };
+
