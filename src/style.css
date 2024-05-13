@@ -68,7 +68,6 @@ a:hover {
 }
 .buttons {
   display: flex;
-  flex: 1;
   justify-content: center;
   gap: 20px;
   margin: 10px;
@@ -253,11 +252,17 @@ div:has(> .enemyBoard) {
   pointer-events: none;
 }
 
-.boat {
+.boat,
+.occupied {
   background-color: blue;
   opacity: 0.6;
 }
-
+.draggedOver {
+  background-color: lightgreen;
+}
+.draggedOverNegative {
+  background-color: lightcoral;
+}
 h1 {
   text-align: center;
   color: #a0d2fc;
@@ -336,31 +341,31 @@ dialog[open]::backdrop {
 }
 
 #Carrier {
-  width: calc(var(--cell-size) * 5);
-  height: calc(var(--cell-size));
+  width: calc(min(var(--cell-size), 75px) * 5);
+  height: min(var(--cell-size), 75px);
   border: 1px solid blue;
   background-color: lightblue;
 }
 .draggable {
-  z-index: 100;
+  cursor: grab;
 }
 #Patrol_Boat {
-  width: calc(var(--cell-size) * 2);
-  height: var(--cell-size);
+  width: calc(min(var(--cell-size), 75px) * 2);
+  height: min(var(--cell-size), 75px);
   border: 1px solid blue;
   background-color: lightblue;
 }
 #Battleship {
-  width: calc(var(--cell-size) * 4);
-  height: calc(var(--cell-size));
+  width: calc(min(var(--cell-size), 75px) * 4);
+  height: min(var(--cell-size), 75px);
   border: 1px solid blue;
   background-color: lightblue;
 }
 
 #Destroyer,
 #Submarine {
-  width: calc(var(--cell-size) * 3);
-  height: var(--cell-size);
+  width: calc(min(var(--cell-size), 75px) * 3);
+  height: min(var(--cell-size), 75px);
   border: 1px solid blue;
   background-color: lightblue;
 }
@@ -369,7 +374,6 @@ dialog[open]::backdrop {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%;
   background-color: lightgray;
   padding: 10px;
   box-shadow: 0 0 6px 6px rgba(74, 74, 74, 0.8);
