@@ -13,8 +13,7 @@ newGameButton.addEventListener("click", () => {
 const startNewGameButton = document.querySelector("#confirmBtn");
 startNewGameButton.addEventListener("click", (e) => {
   e.preventDefault();
+  document.querySelector(".content").style.pointerEvents = "";
   homeScreen(new Player("Player"), new Player());
   document.querySelector("dialog").close();
 });
-
-

@@ -122,19 +122,16 @@ function createGameScreenDOM() {
       showBoard.textContent = " My Board";
     }
   });
-  const nextTurnButton = document.createElement("button");
-  nextTurnButton.id = "next-turn";
-  nextTurnButton.textContent = "Next Turn!";
   content.append(gameScreenElement);
-  content.append(nextTurnButton);
 
   return [myGameboard, enemyGameboard];
 }
 
 function readyScreen(players, turn) {
-  document.querySelector(".content").innerHTML = "";
+  const content = document.querySelector(".content");
+  content.innerHTML = "";
   const readyScreenElement = createReadyScreenDOM(players, turn);
-  document.querySelector(".content").append(readyScreenElement);
+  content.append(readyScreenElement);
   // Add listeners/functionallity
   const readyButton = document.querySelector("#ready");
   readyButton.addEventListener("click", () => {
@@ -150,7 +147,13 @@ function readyScreen(players, turn) {
         // cannot do placedShips =[] because I import it.
         placedShips.pop();
       }
-      passDeviceScreen(readyButton.id, turn, players);
+      if (players[1].playerType === "Computer") {
+        content.innerHTML = "";
+        players[1].randomShipPlacement();
+        gameScreenVsComputer(players, turn);
+      } else {
+        passDeviceScreen(readyButton.id, turn, players);
+      }
     } else {
       alert(`You haven't placed all your ships!`);
     }
@@ -229,7 +232,10 @@ function gameScreen(players, turn) {
   const [myGameboard, enemyGameboard] = createGameScreenDOM();
 
   let played = false;
-  const nextTurnButton = document.querySelector("#next-turn");
+  const nextTurnButton = document.createElement("button");
+  nextTurnButton.id = "next-turn";
+  nextTurnButton.textContent = "Next Turn!";
+  document.querySelector(".content").append(nextTurnButton);
   nextTurnButton.addEventListener("click", () => {
     if (played) {
       turn++;
@@ -323,8 +329,8 @@ function gameScreen(players, turn) {
         ) {
           alert(
             players[playing].playerGameBoard.gameOver()
-              ? `${players[playing].name} won!\nPress the bottom-right button to start a new game!`
-              : `${players[notPlaying].name} won!\nPress the bottom-right button to start a new game!`
+              ? `${players[notPlaying].name} won!\nPress the bottom-right button to start a new game!`
+              : `${players[playing].name} won!\nPress the bottom-right button to start a new game!`
           );
           document.querySelector(".content").style.pointerEvents = "none";
         }
@@ -339,6 +345,96 @@ function gameScreen(players, turn) {
   }
 }
 
+function gameScreenVsComputer(players) {
+  const [myGameboard, enemyGameboard] = createGameScreenDOM();
+  myGameboard.previousElementSibling.textContent = players[0].name;
+  enemyGameboard.previousElementSibling.textContent = players[1].name;
+  myGameboard.style.pointerEvents = "none";
+  for (let cellLetter in players[0].playerGameBoard.myBoard) {
+    for (
+      let cellNumber = 0;
+      cellNumber <= players[0].playerGameBoard.myBoard[cellLetter].length;
+      cellNumber++
+    ) {
+      if (
+        typeof players[0].playerGameBoard.myBoard[cellLetter][cellNumber] ===
+        "object"
+      ) {
+        myGameboard
+          .querySelector(`#m${cellLetter + (cellNumber + 1)}`)
+          .classList.add("boat");
+      }
+    }
+  }
+  const allCells = enemyGameboard.querySelectorAll("[id^=e]");
+  allCells.forEach((cell) => {
+    cell.addEventListener("click", () => {
+      let letter = cell.id[1];
+      let number = parseInt(cell.id.substr(2));
+      players[1].playerGameBoard.receiveAttack(letter, number);
+      enemyGameboard
+        .querySelector(`#e${letter + number}`)
+        .classList.add(players[1].playerGameBoard.myBoard[letter][number - 1]);
+      if (players[1].playerGameBoard.myBoard[letter][number - 1] === "miss") {
+        let missAudio = new Audio(audio1);
+        missAudio.volume = 0.1;
+        missAudio.play();
+      } else {
+        let hitAudio = new Audio(audio2);
+        hitAudio.volume = 0.04;
+        hitAudio.play();
+      }
+      enemyGameboard.style.pointerEvents = "none";
+      // played = true;
+      if (
+        players[0].playerGameBoard.gameOver() ||
+        players[1].playerGameBoard.gameOver()
+      ) {
+        alert(
+          players[0].playerGameBoard.gameOver()
+            ? `${players[1].name} won!\nPress the bottom-right button to start a new game!`
+            : `${players[0].name} won!\nPress the bottom-right button to start a new game!`
+        );
+
+        document.querySelector(".content").style.pointerEvents = "none";
+      } else {
+        setTimeout(() => {
+          computerAttacks(players[0], players[1]);
+        }, 2000);
+      }
+    });
+  });
+}
+function computerAttacks(player, computer) {
+  let [letter, number] = computer.attack();
+  computer.PreviousShots.push(letter + number);
+  player.playerGameBoard.receiveAttack(letter, number);
+  document
+    .querySelector(`#m${letter + number}`)
+    .classList.add(player.playerGameBoard.myBoard[letter][number - 1]);
+  if (player.playerGameBoard.myBoard[letter][number - 1] === "miss") {
+    let missAudio = new Audio(audio1);
+    missAudio.volume = 0.1;
+    missAudio.play();
+  } else {
+    let hitAudio = new Audio(audio2);
+    hitAudio.volume = 0.04;
+    hitAudio.play();
+  }
+  if (
+    player.playerGameBoard.gameOver() ||
+    computer.playerGameBoard.gameOver()
+  ) {
+    alert(
+      player.playerGameBoard.gameOver()
+        ? `${computer.name} won!\nPress the bottom-right button to start a new game!`
+        : `${player.name} won!\nPress the bottom-right button to start a new game!`
+    );
+    document.querySelector(".enemyBoard").style.pointerEvents = "none";
+  }
+  document.querySelector(".enemyBoard").style.pointerEvents = "";
+}
+
 export default function homeScreen(player1, player2) {
   document.querySelector(".content").innerHTML = "";
   let turn = 1;
@@ -347,11 +443,11 @@ export default function homeScreen(player1, player2) {
   homeScreenElement.innerHTML = `
     <div class="player1">
         <h2>Player 1</h2>
-        <input type="text" minlength="4">
+        <input type="text" maxlength="12">
     </div>
     <div class="player2">
         <h2>Player 2</h2>
-        <input type="text" minlength="4">
+        <input type="text" maxlength="12">
         <button id="playertype">Player</button>
     </div>
   <button id="Start">Start</button>`;
@@ -377,6 +473,15 @@ export default function homeScreen(player1, player2) {
     player2.playerType = playerType.textContent;
     player1.name = document.querySelector(".player1 input").value;
     player2.name = document.querySelector(".player2 input").value;
-    readyScreen([player1, player2], turn);
+    if (
+      player1.name.length === 0 ||
+      player2.name.length === 0 ||
+      player1.name.match(/^ *$/) !== null ||
+      player2.name.match(/^ *$/) !== null
+    ) {
+      alert("You cannot have a blank name!");
+    } else {
+      readyScreen([player1, player2], turn);
+    }
   });
 }
