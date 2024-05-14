@@ -261,7 +261,7 @@ div:has(> .enemyBoard) {
   pointer-events: none;
 }
 
-.hit {
+.hit, .boat.hit {
   background-color: red;
   pointer-events: none;
 }

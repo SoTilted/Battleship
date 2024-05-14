@@ -37,7 +37,7 @@ function allowDrop(ev) {
   ) {
     ship = document.querySelector(`#${ev.dataTransfer._data.text}`);
   } else {
-    ship = ev.dataTransfer.mozSourceNode;
+    ship = document.querySelector(`#${ev.dataTransfer.getData('text')}`);
   }
   let [result, coordinates] = checkCellsAvailability(ship, [
     ev.target.id[0],
@@ -71,7 +71,7 @@ function drag(ev) {
   // Responsible for setting where you grabbed the ship
   // Get the target
   const target = ev.target;
-
+  
   // Get the bounding rectangle of target
   const rect = target.getBoundingClientRect();
 
