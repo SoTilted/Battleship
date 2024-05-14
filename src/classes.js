@@ -74,6 +74,80 @@ export default class Player {
       Submarine: new Ship(3),
       Patrol_Boat: new Ship(2),
     };
+    this.PreviousShots = [];
+  }
+  attack() {
+    let letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+    let hasAttacked = false;
+    if (this.playerType === "Computer") {
+      while (!hasAttacked) {
+        let randomLetter = letters[Math.floor(Math.random() * 10)];
+        let randomNumber = Math.floor(Math.random() * 10) + 1;
+        if (this.PreviousShots.indexOf(randomLetter + randomNumber) !== -1) {
+          randomLetter = letters[Math.floor(Math.random() * 10)];
+          randomNumber = Math.floor(Math.random() * 10);
+        } else {
+          hasAttacked = true;
+          return [randomLetter, randomNumber];
+        }
+      }
+    }
+  }
+
+  randomShipPlacement() {
+    let randomStartingLetter = "";
+    let randomStartingNumber = -1;
+    let shipLength = -1;
+    let randomOrientation = -1;
+    let letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+    for (let ship in this.ships) {
+      let coordinates = [];
+      let availability = false;
+      shipLength = this.ships[ship].length;
+      while (!availability) {
+        randomOrientation = Math.floor(Math.random() * 2);
+        if (randomOrientation === 0) {
+          randomStartingLetter = Math.floor(Math.random() * 10);
+          randomStartingNumber = Math.floor(Math.random() * (10 - shipLength));
+        } else {
+          randomStartingLetter = Math.floor(Math.random() * (10 - shipLength));
+          randomStartingNumber = Math.floor(Math.random() * 10);
+        }
+        for (let i = 0; i < shipLength; i++) {
+          if (randomOrientation === 0) {
+            if (
+              this.playerGameBoard.myBoard[letters[randomStartingLetter]][
+                randomStartingNumber + i
+              ] === ""
+            ) {
+              coordinates.push(
+                letters[randomStartingLetter] + (randomStartingNumber + i + 1)
+              );
+            } else {
+              coordinates = [];
+              availability = false;
+              break;
+            }
+            availability = true;
+          } else {
+            if (
+              this.playerGameBoard.myBoard[letters[randomStartingLetter + i]][
+                randomStartingNumber
+              ] === ""
+            ) {
+              coordinates.push(
+                letters[randomStartingLetter + i] + (randomStartingNumber + 1)
+              );
+            } else {
+              coordinates = [];
+              availability = false;
+              break;
+            }
+            availability = true;
+          }
+        }
+      }
+      this.playerGameBoard.placeShip(this.ships[ship], coordinates);
+    }
   }
 }
-
