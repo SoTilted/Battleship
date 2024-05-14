@@ -143,7 +143,11 @@ input {
   width: 100%;
 }
 
-#playertype {
+#playertype,
+.buttons > button,
+#next-turn,
+#myBoard,
+#enemyBoard {
   background-color: steelblue;
   border: none;
   font-size: 1.3rem;
@@ -151,7 +155,17 @@ input {
   text-shadow: black 1px 0 10px;
 }
 
-#playertype:hover {
+#next-turn.Continue {
+  background-color: #000000;
+  margin: 0;
+}
+
+.buttons > button {
+  font-size: 1rem;
+}
+
+#playertype:hover,
+.buttons > button:hover {
   opacity: 0.8;
 }
 
