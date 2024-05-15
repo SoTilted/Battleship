@@ -1,4 +1,5 @@
 // drag and drop
+
 let pointOfContact = 0;
 let placedShips = [];
 const content = document.querySelector(".content");
@@ -35,9 +36,10 @@ function allowDrop(ev) {
     navigator.maxTouchPoints > 0 ||
     navigator.msMaxTouchPoints > 0
   ) {
-    ship = document.querySelector(`#${ev.dataTransfer._data.text}`);
+    ship = document.querySelector(`#${ev.dataTransfer._data["text/plain"]}`);
   } else {
-    ship = document.querySelector(`#${ev.dataTransfer.getData('text')}`);
+    // ev.dataTransfer.getData("text/plain") Google Chrome is gay and you cannot read data during dragStart
+    ship = document.querySelector(`#${window.value}`);
   }
   let [result, coordinates] = checkCellsAvailability(ship, [
     ev.target.id[0],
@@ -71,7 +73,7 @@ function drag(ev) {
   // Responsible for setting where you grabbed the ship
   // Get the target
   const target = ev.target;
-  
+
   // Get the bounding rectangle of target
   const rect = target.getBoundingClientRect();
 
@@ -87,13 +89,15 @@ function drag(ev) {
       (y / rect.height) * parseInt(ev.target.attributes["value"].value) + 1
     );
   }
-  ev.dataTransfer.setData("text", ev.target.id);
+
+  ev.dataTransfer.setData("text/plain", ev.target.id);
+  window.value = ev.target.id;
 }
 
 function drop(ev) {
   // Responsible for dropping the dragged element if it passes the availability function check
   ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
+  var data = ev.dataTransfer.getData("text/plain");
   if (ev.target.classList[0] === "cell") {
     let ship = document.getElementById(data);
     let [result, coordinates] = checkCellsAvailability(ship, [
