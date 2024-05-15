@@ -93,7 +93,7 @@ function createGameScreenDOM() {
   const content = document.querySelector(".content");
   let gameScreenElement = document.createElement("div");
   gameScreenElement.innerHTML = `
-  <button id="myBoard">My Board</button>
+  <button id="enemyBoard">Enemy Board</button>
   <div>
   <h1></h1>
   <div class="myBoard"></div>
